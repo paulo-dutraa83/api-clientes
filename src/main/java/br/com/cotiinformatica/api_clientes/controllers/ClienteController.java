@@ -41,12 +41,54 @@ public class ClienteController {
 
         try {
             //Consultar os clientes pelo nome e retornar a lista obtida no banco
-            return clienteRepository.obterPornome(nome); //EndPoint
+            return clienteRepository.obterPorNome(nome); //EndPoint
 
         } catch (Exception e) {
             e.printStackTrace(); //Exibir o log do erro no terinal do IntelliJ
             return null; //Retornar nulo
 
+        }
+
+    }
+
+    @PutMapping("{id}")
+    public String put(@PathVariable Integer id, @RequestBody ClienteRequest request) {
+
+        try {
+
+            var cliente = new Cliente(); //Criar um objeto da classe Cliente
+
+            cliente.setId(id);
+            cliente.setNome(request.nome());
+            cliente.setEmail(request.email());
+            cliente.setTelefone(request.telefone());
+
+            //Atualizar no banco
+            if(clienteRepository.atualizar(cliente)) {
+                return  "Cliente atualizao com sucesso";
+            }
+            else {
+                return  "O cliente não foi encontrado para edição";
+            }
+
+        } catch (Exception e) {
+            return "Falha ao atualizar cliente: " + e.getMessage();
+        }
+    }
+
+    @PutMapping("{id}")
+    public String delete(@PathVariable Integer id) {
+
+        try {
+            if(clienteRepository.excluir(id)) {
+                return "Cliente excluido com sucesso";
+            }
+            else {
+                return "O cliente nao foi encontrado para exclusão";
+            }
+
+        } catch (Exception e) {
+            return "Falha ao excluir cliente: " + e.getMessage();
         }
 
     }

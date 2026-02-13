@@ -42,7 +42,7 @@ public class ClienteRepository {
 
     //Metodo para retornar uma lista de clientes no banco de dados
     //Não é void pois efetivamente retorna algo
-    public List<Cliente> obterPornome(String nome) throws Exception {
+    public List<Cliente> obterPorNome(String nome) throws Exception {
 
         //Escrevendo o comando SQL que será executado no bancod e dados
         var sql = """
@@ -80,4 +80,61 @@ public class ClienteRepository {
 
         return lista; //Retornando a lista
     }
+
+    //Metodo para atualizar um cliente no banco d dados
+    public boolean atualizar(Cliente cliente) throws Exception {
+
+        //Escrevendo o comando SQQL que seá executado no banco de dados
+        var sql = """
+                    UPDATE clientes
+                    SET
+                        nome =?, email = ?, telefone = ?
+                    WHERE
+                        id = ?
+                """;
+
+        //Abrindoconexão com o banco de dados
+        var connection = connectionFactory.getConnection();
+
+        //Executando o comando SQL para a edição
+        var statement = connection.prepareStatement(sql);
+        statement.setString(1, cliente.getNome());
+        statement.setString(2, cliente.getEmail());
+        statement.setString(3, cliente.getTelefone());
+        statement.setInt(4, cliente.getId());
+        var result = statement.executeUpdate();
+
+        //Fechando a conexão com o banco de dados
+        connection.close();
+
+        return  result > 0;
+    }
+
+    //Metodo para a exclusão logica de um cliente no banco d dados
+    public boolean excluir(Integer id) throws Exception {
+
+        //Escrevendo o comando SQL que será executado no banco de dados
+        var sql = """
+                    UPDATE clientes
+                    SET
+                        ativo = o
+                    WHERE
+                        id = ?    
+                """;
+
+        //Abrindo conexão com o banco de dados
+        var connection = connectionFactory.getConnection();
+
+        //Executando o comando no banco de dados
+        var statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        var result = statement.executeUpdate();
+
+        //Fechando a conexão
+        connection.close();
+
+        //Retornar verdadeiro se algum registro for alterado
+        return result > 0;
+    }
+
 }
